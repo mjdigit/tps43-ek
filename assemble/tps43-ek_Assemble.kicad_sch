@@ -2121,7 +2121,7 @@
 		)
 		(uuid "fe895e75-7639-4576-9d5a-71dc4de6bf44")
 	)
-	(global_label "SCL"
+	(global_label "SDA"
 		(shape input)
 		(at 69.85 29.21 0)
 		(fields_autoplaced yes)
@@ -2341,7 +2341,7 @@
 			)
 		)
 	)
-	(global_label "SDA"
+	(global_label "SCL"
 		(shape input)
 		(at 69.85 26.67 0)
 		(fields_autoplaced yes)
