@@ -79,7 +79,13 @@ Put RP2040-Zero again and solder it. Then cutoff the pins on Front side and Back
 
 
 #### Work Around: Replace SCL and SDA
-As written on "Important Notice", it is required to place SDA on pin0 and SCL on pin1. 
+As written on "Important Notice", it is required to place SDA on pin0 and SCL on pin1. Please connect each other in the below pads the cutoff the wire towards FPC connector.
+
+![Build Guide-Mainplate work around 01](images/BuildGuide-mainplate-wa01.jpg)
+
+![Build Guide-Mainplate work around 02](images/BuildGuide-mainplate-wa02.jpg)
+
+
 
 #### Check whether touchpad works
 Connect the main plate and TPS43 using FPC connector.
