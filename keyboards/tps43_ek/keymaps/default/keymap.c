@@ -3,18 +3,28 @@
 
 #include QMK_KEYBOARD_H
 
+enum custom_keycodes {
+    DRGSCRL = QK_KB_0, // Set drag scroll mode
+    DRG_ROT,
+    ROTRIG,
+    ROTLFT,
+};
+
+enum keymap_layers {
+    _BASE,
+    _ROTATE,
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    /*
-     * ┌───────┐         ┌───────┐
-     * │ M_CLK │         │ L_CLK │
-     * ├───────┤         ├───────┤
-     * │ L_CLK │         │ R_CLK │
-     * └───────┘         └───────┘
-     */
-    [0] = LAYOUT(
-        MS_BTN3, MS_BTN1,
+    [_BASE] = LAYOUT(
+        MS_BTN3, DRG_ROT,
         MS_BTN1, MS_BTN2
-    )
+    ),
+
+    [_ROTATE] = LAYOUT(
+        ROTRIG , _______,
+        _______, ROTLFT
+    ),
 };
 
 void keyboard_post_init_user(void) {
@@ -34,6 +44,45 @@ static float scroll_accumulated_h = 0;
 static float scroll_accumulated_v = 0;
 
 static bool drag_scrolling = false;
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  /**
+  static uint16_t last_keycode = KC_NO;
+  uint16_t prev_keycode = last_keycode;
+  bool is_tapped = ((!record->event.pressed) && (keycode == last_keycode));
+
+  last_keycode = keycode;
+  **/
+
+  switch (keycode) {
+  case DRGSCRL:
+    drag_scrolling = record->event.pressed? true: false;
+    break;
+  case DRG_ROT:
+    if (record->event.pressed) {
+      drag_scrolling = true;
+      layer_on(_ROTATE);
+    } else {
+      drag_scrolling = false;
+      layer_off(_ROTATE);
+    }
+    break;
+  case ROTRIG:
+    if (record->event.pressed) {
+      rotation = (rotation % 90 == 0)? (rotation + 90) % 360: 0;
+    }
+    break;
+  case ROTLFT:
+    if (record->event.pressed) {
+      rotation = (rotation % 90 == 0)? (rotation + 270) % 360: 0;
+    }
+    break;
+  default:
+    break;
+  }
+
+  return true;
+}
 
 report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
   int16_t cur_x = mouse_report.x;
