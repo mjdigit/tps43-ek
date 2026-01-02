@@ -138,3 +138,11 @@ Put the plates on bottom plate using spacers and screws. And put keycaps.
 Finally, put rubber feets on the bottom plate.
 
 ![Build Guide-Assemble step 05](images/BuildGuide-assemble-05.jpg)
+
+
+## Default layout
+![Default Keymap](images/DefaultKeymap.png)
+
+You can rotate touchpad and keys using rotate layer.
+
+![Rotate Layer Keymap](images/RotateLayerKeymap.png)

@@ -11,19 +11,49 @@ enum custom_keycodes {
 };
 
 enum keymap_layers {
-    _BASE,
-    _ROTATE,
+    _BASE0,
+    _BASE90,
+    _BASE180,
+    _BASE270,
+    _FN0,
+    _FN90,
+    _FN180,
+    _FN270,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [_BASE] = LAYOUT(
+    [_BASE0] = LAYOUT(
         MS_BTN3, DRG_ROT,
         MS_BTN1, MS_BTN2
     ),
+    [_BASE90] = LAYOUT(
+        DRG_ROT, MS_BTN2,
+        MS_BTN3, MS_BTN1
+    ),
+    [_BASE180] = LAYOUT(
+        MS_BTN2, MS_BTN1,
+        DRG_ROT, MS_BTN3
+    ),
+    [_BASE270] = LAYOUT(
+        MS_BTN1, MS_BTN3,
+        MS_BTN2, DRG_ROT
+    ),
 
-    [_ROTATE] = LAYOUT(
-        ROTRIG , _______,
+    [_FN0] = LAYOUT(
+        ROTLFT , _______,
+        _______, ROTRIG
+    ),
+    [_FN90] = LAYOUT(
+        _______, ROTRIG,
+        ROTLFT , _______
+    ),
+    [_FN180] = LAYOUT(
+        ROTRIG, _______,
         _______, ROTLFT
+    ),
+    [_FN270] = LAYOUT(
+        _______, ROTLFT,
+        ROTRIG, _______
     ),
 };
 
@@ -45,14 +75,11 @@ static float scroll_accumulated_v = 0;
 
 static bool drag_scrolling = false;
 
+#define PROCESS_OVERRIDE_BEHAVIOR false
+#define PROCESS_USUAL_BEHAVIOR    true
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  /**
-  static uint16_t last_keycode = KC_NO;
-  uint16_t prev_keycode = last_keycode;
-  bool is_tapped = ((!record->event.pressed) && (keycode == last_keycode));
-
-  last_keycode = keycode;
-  **/
+  layer_state_t defaultlayer[] = {_BASE0, _BASE90, _BASE180, _BASE270};
+  layer_state_t fnlayer[] = {_FN0, _FN90, _FN180, _FN270};
 
   switch (keycode) {
   case DRGSCRL:
@@ -61,27 +88,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   case DRG_ROT:
     if (record->event.pressed) {
       drag_scrolling = true;
-      layer_on(_ROTATE);
+      layer_move(fnlayer[rotation / 90]);
     } else {
       drag_scrolling = false;
-      layer_off(_ROTATE);
+      layer_move(defaultlayer[rotation / 90]);
     }
-    break;
+    return PROCESS_OVERRIDE_BEHAVIOR;
   case ROTRIG:
     if (record->event.pressed) {
       rotation = (rotation % 90 == 0)? (rotation + 90) % 360: 0;
+      default_layer_set(defaultlayer[rotation / 90]);
     }
-    break;
+    return PROCESS_OVERRIDE_BEHAVIOR;
   case ROTLFT:
     if (record->event.pressed) {
       rotation = (rotation % 90 == 0)? (rotation + 270) % 360: 0;
+      default_layer_set(defaultlayer[rotation / 90]);
     }
-    break;
+    return PROCESS_OVERRIDE_BEHAVIOR;
   default:
     break;
   }
 
-  return true;
+  return PROCESS_USUAL_BEHAVIOR;
 }
 
 report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
